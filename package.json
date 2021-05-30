@@ -1,0 +1,18 @@
+{
+  "name": "stock-api-ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^15.6.1",
+    "colors": "^1.4.0",
+    "financejs": "^4.1.0",
+    "strip-color": "^0.1.0",
+    "yahoo-finance2": "^1.10.4"
+  }
+}
