@@ -1,14 +1,14 @@
 [
     {
         "name": "AKSA.IS",
-        "term": "long"
+        "term": "LONG"
     },
     {
         "name": "ALARK.IS",
-        "term": "mid"
+        "term": "MID"
     },
     {
         "name": "AYDEM.IS",
-        "term": "short"
+        "term": "SHORT"
     }
 ]

@@ -84,11 +84,18 @@ export class FileReportService extends ReportService {
     _fileName: string;
     _reportFile: any;
 
-    constructor() {
+    constructor(dir: string = null, fileName: string = null) {
         super();
         this._reportFile = null;
-        this._dir = "./report";
-        this._fileName = TimeUtilities.getDateAsYearMonthDay(Date.now()) + ".txt";
+        this._dir = dir;
+        this._fileName = fileName;
+        this.createReportFileSync();
+    }
+
+    _writeToReportFile(data: string) {
+        if (this._reportFile !== null) {
+            this._reportFile.write(strip(data) + "\n");
+        }
     }
 
     report() {
@@ -100,7 +107,7 @@ export class FileReportService extends ReportService {
             return;
         }
 
-        console.log("FILE REPORT SERVICE - Errors");
+        this._writeToReportFile("FILE REPORT SERVICE - Errors");
 
         errorList.forEach(error => {
             let data: any = error.data;
@@ -108,14 +115,12 @@ export class FileReportService extends ReportService {
                 data = JSON.stringify(error.data)
             }
 
-            console.log(error.message + " => " + data)
+            this._writeToReportFile(error.message + " => " + data);
         });
     }
 
     analyze(data: string) {
-        if (this._reportFile !== null) {
-            this._reportFile.write(strip(data) + "\n");
-        }
+        this._writeToReportFile(data);
     }
 
     setReportFile(dir: string, name: string): void {
@@ -147,7 +152,14 @@ export class FileReportService extends ReportService {
         return this._dir;
     }
 
+    _checkReportFile() {
+        if (this.getReportDir() == null) this.setReportDir("./report");
+        if (this.getReportFileName() == null) this.setReportFileName(TimeUtilities.getDateAsYearMonthDay(Date.now()) + ".txt");
+    }
+
     createReportFile() {
+        this._checkReportFile();
+
         fs.mkdir(this.getReportDir(), { recursive: true }, err => {
             if (err) {
                 super.error({ message: "Create report file is unsuccesful", data: err });
@@ -157,6 +169,15 @@ export class FileReportService extends ReportService {
             this._reportFile = fs.createWriteStream(this.getReportFile(), {
                 flags: 'w'
             });
+        });
+    }
+
+    async createReportFileSync() {
+        this._checkReportFile();
+
+        fs.mkdirSync(this.getReportDir(), { recursive: true });
+        this._reportFile = fs.createWriteStream(this.getReportFile(), {
+            flags: 'w'
         });
     }
 }

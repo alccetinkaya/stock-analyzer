@@ -1,35 +1,77 @@
 import { Finance } from "financejs";
 import yahooFinance from "yahoo-finance2";
+import { ErrorData } from "./src/models/report-data.model";
+import { StockData } from "./src/models/stock.model";
 import { AnalyzeService } from "./src/services/analyze.services";
 import { GeneralFinanceService, TechnicalFinanceService } from "./src/services/finance.services";
-import { ConsoleReportService, FileReportService } from "./src/services/report.services";
+import { ConsoleReportService, FileReportService, ReportService } from "./src/services/report.services";
 import { StockService } from "./src/services/stock-data.services";
 
-async function start() {
-    // create application report services
+function createReportServices(): Array<ReportService> {
     let consoleReportService = new ConsoleReportService();
     let fileReportService = new FileReportService();
-    fileReportService.createReportFile();
+
+    return [consoleReportService, fileReportService]
+}
+
+async function startAnalyze() {
+    // create application report services
+    let reportServices: ReportService[] = createReportServices();
 
     // create general finance services
     let gFinanceService = new GeneralFinanceService(yahooFinance);
-    let tFinanceService = new TechnicalFinanceService(new Finance()); 
+    let tFinanceService = new TechnicalFinanceService(new Finance());
 
     // create stock service
-    let stockService = new StockService([consoleReportService, fileReportService], gFinanceService);
+    let stockService = new StockService(reportServices, gFinanceService);
     stockService.loadStockData();
 
     // create analyze service
-    let analyzeService = new AnalyzeService([consoleReportService, fileReportService], gFinanceService, tFinanceService);
+    let analyzeService = new AnalyzeService(reportServices, gFinanceService, tFinanceService);
 
-    // analyze stock
-    for (let index = 0; index < stockService.getStockNumber(); index++) {
-        await analyzeService.stockAnalyzer(stockService.getStockByIndex(index));
+    switch (process.argv.length) {
+        case 2:
+            // analyze all stocks in data
+            for (let index = 0; index < stockService.getStockNumber(); index++) {
+                await analyzeService.stockAnalyzer(stockService.getStockByIndex(index));
+            }
+            break;
+        case 4:
+            //analyze given stock
+            let stockData: StockData = {name: process.argv[2], term: process.argv[3]};
+            await analyzeService.stockAnalyzer(stockData);
+
+            break;
+        default:
+            let errorMsg: ErrorData = {
+                message: "Number of arguments must be 2 (node, $targetDir/index.js) or 4 (node, $targetDir/index.js, <stock_name>, <term_type>)",
+                data: process.argv
+            };
+
+            for (let reportService of reportServices) {
+                reportService.error(errorMsg);
+            }
+            break;
     }
 
-    // run report services action
-    consoleReportService.report();
-    fileReportService.report();
+    // application report
+    for (let reportService of reportServices) {
+        reportService.report();
+    }
+}
+
+async function start() {
+    try {
+        await startAnalyze();
+    } catch (error) {
+        // create application report services
+        let reportServices: ReportService[] = createReportServices();
+
+        for (let reportService of reportServices) {
+            reportService.error({ message: "Application unhandled error", data: error.message });
+            reportService.report();
+        }
+    }
 }
 
 start();

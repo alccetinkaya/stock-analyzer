@@ -17,7 +17,7 @@ export class AnalyzeService extends ReportUtility {
         this._tFinanceSvc = tFinanceService;
     }
 
-    prepareAnalyzeResult({ caption = "", analyzeData, bottomLine = false, padEnd = null, headLine = false }): string {
+    prepareAnalyzeResult({ caption = "", analyzeData, bottomLine = false, padEnd = null, headLine = false, endLine = false }): string {
         let result: string = "";
 
         if (headLine) result += "\n";
@@ -28,6 +28,7 @@ export class AnalyzeService extends ReportUtility {
             if (bottomLine) result += "\n";
         }
 
+        if (endLine) result += "\n";
         return result;
     }
 
@@ -52,14 +53,13 @@ export class AnalyzeService extends ReportUtility {
         let rate: number = MathUtilities.getPrecisedNumber((current - reference) / period);
 
         super.reportAnalyze(this.prepareAnalyzeResult({
-            caption: colors.cyan("- Technical Analyze (Average Reference) -"),
+            caption: colors.cyan("- Technical Analyze (Reference: Average) -"),
             analyzeData: [
                 { type: "Future Value (FV)", value: this._tFinanceSvc.getFV(rate, current, period) },
                 { type: "Compound Annual Growth Rate (CAGR)", value: this._tFinanceSvc.getCAGR(reference, current, period) },
                 { type: "Rule of 72 (R72)", value: this._tFinanceSvc.getR72(rate) },
             ],
-            bottomLine: true,
-            headLine: true
+            bottomLine: true
         }));
     }
 
@@ -74,7 +74,8 @@ export class AnalyzeService extends ReportUtility {
                 { type: "Low", value: stockInfo.low },
                 { type: "Current", value: stockInfo.current },
             ],
-            padEnd: 15
+            padEnd: 15,
+            endLine: true
         });
     }
 
@@ -208,7 +209,8 @@ export class AnalyzeService extends ReportUtility {
                 { type: "Low", value: stockInfo.low },
                 { type: "Close", value: stockInfo.close },
             ],
-            padEnd: 15
+            padEnd: 15,
+            endLine: true
         }));
 
         // 4 weeks
@@ -222,7 +224,8 @@ export class AnalyzeService extends ReportUtility {
                 { type: "Low", value: stockInfo.low },
                 { type: "Close", value: stockInfo.close },
             ],
-            padEnd: 15
+            padEnd: 15,
+            endLine: true
         }));
 
         // 8 weeks
@@ -236,7 +239,8 @@ export class AnalyzeService extends ReportUtility {
                 { type: "Low", value: stockInfo.low },
                 { type: "Close", value: stockInfo.close },
             ],
-            padEnd: 15
+            padEnd: 15,
+            endLine: true
         }));
     }
 

@@ -1,7 +1,7 @@
 export enum StockTerms {
-    LONG = "long",
-    MID = "mid",
-    SHORT = "short"
+    LONG = "LONG",
+    MID = "MID",
+    SHORT = "SHORT"
 }
 
 export interface StockData {
