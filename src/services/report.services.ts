@@ -55,23 +55,46 @@ export class ConsoleReportService extends ReportService {
 
     report() {
         let errorList: ReportData.ErrorData[];
-
         errorList = super.getErrorList();
+        if (errorList.length > 0) {
+            console.log("Application Errors");
+            errorList.forEach(error => {
+                let data: any = error.data;
+                if (typeof error.data == 'object') {
+                    data = JSON.stringify(error.data)
+                }
 
-        if (errorList.length <= 0) {
-            return;
+                console.log(error.message + " => " + data)
+            });
         }
 
-        console.log("CONSOLE REPORT SERVICE - Errors");
+        let warnList: ReportData.WarnData[];
+        warnList = super.getWarnList();
+        if (warnList.length > 0) {
+            console.log("Application Warnings");
+            warnList.forEach(warn => {
+                let data: any = warn.data;
+                if (typeof warn.data == 'object') {
+                    data = JSON.stringify(warn.data)
+                }
 
-        errorList.forEach(error => {
-            let data: any = error.data;
-            if (typeof error.data == 'object') {
-                data = JSON.stringify(error.data)
-            }
+                console.log(warn.message + " => " + data)
+            });
+        }
 
-            console.log(error.message + " => " + data)
-        });
+        let infoList: ReportData.InfoData[];
+        infoList = super.getInfoList();
+        if (infoList.length > 0) {
+            console.log("Application Info");
+            infoList.forEach(info => {
+                let data: any = info.data;
+                if (typeof info.data == 'object') {
+                    data = JSON.stringify(info.data)
+                }
+
+                console.log(info.message + " => " + data)
+            });
+        }
     }
 
     analyze(data: string) {
@@ -100,23 +123,46 @@ export class FileReportService extends ReportService {
 
     report() {
         let errorList: ReportData.ErrorData[];
-
         errorList = super.getErrorList();
+        if (errorList.length > 0) {
+            this._writeToReportFile("Application Errors");
+            errorList.forEach(error => {
+                let data: any = error.data;
+                if (typeof error.data == 'object') {
+                    data = JSON.stringify(error.data)
+                }
 
-        if (errorList.length <= 0) {
-            return;
+                this._writeToReportFile(error.message + " => " + data)
+            });
         }
 
-        this._writeToReportFile("FILE REPORT SERVICE - Errors");
+        let warnList: ReportData.WarnData[];
+        warnList = super.getWarnList();
+        if (warnList.length > 0) {
+            this._writeToReportFile("Application Warnings");
+            warnList.forEach(warn => {
+                let data: any = warn.data;
+                if (typeof warn.data == 'object') {
+                    data = JSON.stringify(warn.data)
+                }
 
-        errorList.forEach(error => {
-            let data: any = error.data;
-            if (typeof error.data == 'object') {
-                data = JSON.stringify(error.data)
-            }
+                this._writeToReportFile(warn.message + " => " + data)
+            });
+        }
 
-            this._writeToReportFile(error.message + " => " + data);
-        });
+        let infoList: ReportData.InfoData[];
+        infoList = super.getInfoList();
+        if (infoList.length > 0) {
+            this._writeToReportFile("Application Info");
+            infoList.forEach(info => {
+                let data: any = info.data;
+                if (typeof info.data == 'object') {
+                    data = JSON.stringify(info.data)
+                }
+
+                this._writeToReportFile(info.message + " => " + data)
+            });
+        }
     }
 
     analyze(data: string) {
