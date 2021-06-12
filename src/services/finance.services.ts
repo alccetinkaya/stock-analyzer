@@ -25,14 +25,10 @@ export class GeneralFinanceService {
     }
 
     async getHistoricalData(symbol: string, multiplier: number, timeConvType: string): Promise<HistoricalStockData[]> {
-        try {
-            let pastDate: string = TimeUtilities.getPastDate(Date.now(), multiplier, timeConvType);
-            let interval: string = this.convertTimeConvTypeToTimeInterval(timeConvType);
+        let pastDate: string = TimeUtilities.getPastDate(Date.now(), multiplier, timeConvType);
+        let interval: string = this.convertTimeConvTypeToTimeInterval(timeConvType);
 
-            return await this._service.historical(symbol, { period1: pastDate, interval: interval });
-        } catch (error) {
-
-        }
+        return await this._service.historical(symbol, { period1: pastDate, interval: interval });
     }
 
     async quote(symbol: string) {

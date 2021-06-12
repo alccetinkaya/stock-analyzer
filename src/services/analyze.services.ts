@@ -1,4 +1,5 @@
 import * as StockModel from "../models/stock.model";
+import { GeneralUtilities } from "../utilities/general.utilities";
 import { MathUtilities } from "../utilities/math.utilities";
 import { ReportUtility } from "../utilities/report.utilities";
 import { StockUtilities } from "../utilities/stock.utilities";
@@ -247,28 +248,38 @@ export class AnalyzeService extends ReportUtility {
     async stockAnalyzer(stock: StockModel.StockData) {
         let historicalData: StockModel.HistoricalStockData[];
 
-        switch (stock.term) {
-            case StockModel.StockTerms.LONG:
-                // get 5 years historical data
-                historicalData = await this._gFinanceSvc.getHistoricalData(stock.name, 5, TimeConvertionTypes.YEAR);
-                await this._longtermAnalyze(stock, historicalData);
-                break;
+        try {
+            switch (stock.term) {
+                case StockModel.StockTerms.LONG:
+                    // get 5 years historical data
+                    historicalData = await this._gFinanceSvc.getHistoricalData(stock.name, 5, TimeConvertionTypes.YEAR);
+                    await this._longtermAnalyze(stock, historicalData);
+                    break;
 
-            case StockModel.StockTerms.MID:
-                // get 3 years historical data
-                historicalData = await this._gFinanceSvc.getHistoricalData(stock.name, 3, TimeConvertionTypes.YEAR);
-                await this._midtermAnalyze(stock, historicalData);
-                break;
+                case StockModel.StockTerms.MID:
+                    // get 3 years historical data
+                    historicalData = await this._gFinanceSvc.getHistoricalData(stock.name, 3, TimeConvertionTypes.YEAR);
+                    await this._midtermAnalyze(stock, historicalData);
+                    break;
 
-            case StockModel.StockTerms.SHORT:
-                // get 6 years historical data
-                historicalData = await this._gFinanceSvc.getHistoricalData(stock.name, 6, TimeConvertionTypes.MONTH);
-                await this._shorttermAnalyze(stock, historicalData);
-                break;
+                case StockModel.StockTerms.SHORT:
+                    // get 6 months historical data
+                    historicalData = await this._gFinanceSvc.getHistoricalData(stock.name, 6, TimeConvertionTypes.MONTH);
+                    await this._shorttermAnalyze(stock, historicalData);
+                    break;
 
-            default:
-                super.reportError({ message: "Stock Analyzer undefined stock term", data: stock.term });
-                break;
+                default:
+                    super.reportError({ message: "Stock Analyzer undefined stock term", data: stock.term });
+                    break;
+            }
+        } catch (error) {
+            if (error.message == 'Unauthorized') {
+                this.reportError({ message: "Stock analysis will be tried again in 1 minute", data: "Unauthorization error..." });
+                await GeneralUtilities.sleep(60000);
+                await this.stockAnalyzer(stock);
+            }
+
+            this.reportError({ message: "Analyze Exception", data: error.message });
         }
     }
 }
