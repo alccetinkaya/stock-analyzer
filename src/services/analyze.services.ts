@@ -274,8 +274,8 @@ export class AnalyzeService extends ReportUtility {
             }
         } catch (error) {
             if (error.message == 'Unauthorized') {
-                this.reportError({ message: "Stock analysis will be tried again in 1 minute", data: "Unauthorization error..." });
-                await GeneralUtilities.sleep(60000);
+                super.log("Unauthorization error. Stock analysis will be tried again in 2 minutes...");
+                await GeneralUtilities.sleep(120000);
                 await this.stockAnalyzer(stock);
             }
 
