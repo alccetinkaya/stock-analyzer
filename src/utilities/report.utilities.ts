@@ -32,4 +32,10 @@ export abstract class ReportUtility extends ReportService {
             reportService.analyze(data);
         }
     }
+
+    log(data: string) {
+        for (const reportService of this._reportServices) {
+            reportService.log(data);
+        }
+    }
 }

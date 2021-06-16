@@ -34,6 +34,7 @@ export abstract class ReportService implements ReportInterface {
 
     analyze(data: string) { }
     report() { }
+    log(data: string) { }
 
     getErrorList(): ReportData.ErrorData[] {
         return this._errorList;
@@ -98,6 +99,10 @@ export class ConsoleReportService extends ReportService {
     }
 
     analyze(data: string) {
+        console.log(data);
+    }
+
+    log(data: string) {
         console.log(data);
     }
 }
@@ -166,6 +171,10 @@ export class FileReportService extends ReportService {
     }
 
     analyze(data: string) {
+        this._writeToReportFile(data);
+    }
+
+    log(data: string) {
         this._writeToReportFile(data);
     }
 
