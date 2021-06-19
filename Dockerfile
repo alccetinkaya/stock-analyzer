@@ -7,4 +7,4 @@ COPY . .
 EXPOSE 3000
 RUN npm install -g typescript
 RUN tsc -p tsconfig.json
-CMD ["node", "out/index.js"]
+ENTRYPOINT [ "./entrypoint.sh" ]
