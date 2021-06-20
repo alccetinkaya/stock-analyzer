@@ -117,7 +117,6 @@ export class FileReportService extends ReportService {
         this._reportFile = null;
         this._dir = dir;
         this._fileName = fileName;
-        this.createReportFileSync();
     }
 
     _writeToReportFile(data: string) {
@@ -188,7 +187,7 @@ export class FileReportService extends ReportService {
     }
 
     setReportFileName(fileName: string) {
-        if (fileName !== null || fileName !== undefined) {
+        if (fileName !== null && fileName !== undefined) {
             this._fileName = fileName;
         }
     }
@@ -198,7 +197,7 @@ export class FileReportService extends ReportService {
     }
 
     setReportDir(dir: string) {
-        if (dir !== null || dir !== undefined) {
+        if (dir !== null && dir !== undefined) {
             this._dir = dir;
         }
     }

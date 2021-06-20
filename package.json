@@ -11,6 +11,7 @@
   "dependencies": {
     "@types/node": "^15.6.1",
     "colors": "^1.4.0",
+    "dotenv": "^10.0.0",
     "financejs": "^4.1.0",
     "strip-color": "^0.1.0",
     "yahoo-finance2": "^1.10.4"
