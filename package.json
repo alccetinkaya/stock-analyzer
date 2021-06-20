@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "docker_build": "docker build -t stock-analyzer ."
+    "docker_build": "docker build -t stock-analyzer .",
+    "docker_run": "docker run -d -v D:/StockAPIReports:/usr/src/app/report -p 3000:3000 --env --name stock-analyzer --restart on-failure stock-analyzer"
   },
   "author": "",
   "license": "ISC",
