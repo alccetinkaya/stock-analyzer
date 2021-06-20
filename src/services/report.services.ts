@@ -192,6 +192,16 @@ export class FileReportService extends ReportService {
         }
     }
 
+    setReportFileNameIndex(fileName: string, index: number) {
+        if (fileName !== null && fileName !== undefined) {
+            let dotSplit = fileName.split(".");
+            let underscoreSplit = dotSplit[0].split("_");
+            let indexStr: string = "0" + index;
+
+            this._fileName = underscoreSplit[0] + "_" + indexStr.substr(0, 2) + "." + dotSplit[1];
+        }
+    }
+
     getReportFileName(): string {
         return this._fileName;
     }
@@ -206,9 +216,21 @@ export class FileReportService extends ReportService {
         return this._dir;
     }
 
+    _checkIfReportFileExists(counter: number = 0) {
+        if (counter >= 100) return;
+
+        let exists: boolean = fs.existsSync(this.getReportFile());
+        if (exists) {
+            this.setReportFileNameIndex(this.getReportFileName(), ++counter);
+            this._checkIfReportFileExists(counter);
+        }
+    }
+
     _checkReportFile() {
         if (this.getReportDir() == null) this.setReportDir("./report");
-        if (this.getReportFileName() == null) this.setReportFileName(TimeUtilities.getDateAsYearMonthDay(Date.now()) + ".txt");
+        if (this.getReportFileName() == null) this.setReportFileName(TimeUtilities.getDateAsYearMonthDay(Date.now()) + "_00" + ".txt");
+
+        this._checkIfReportFileExists();
     }
 
     createReportFile() {
@@ -225,6 +247,8 @@ export class FileReportService extends ReportService {
             });
         });
     }
+
+
 
     async createReportFileSync() {
         this._checkReportFile();
